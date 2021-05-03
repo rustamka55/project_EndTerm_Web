@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import Home from '../components/Home'
 import Profile from '../components/Profile'
 import ToDo from '../components/ToDo'
@@ -21,11 +21,11 @@ const routes = [
     name: 'Profile',
     component: Profile
   },
-  {
-    path: '/ToDo',
-    name: 'ToDo',
-    component: ToDo
-  },
+  //{
+   // path: '/ToDo',
+   // name: 'ToDo',
+  //  component: ToDo
+  //},
   {
     path: '/Blogs',
     name: 'Blogs',
@@ -44,7 +44,19 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes
 })
+
+router.beforeEach((to, from, next) => {
+  const publicPages = ['/Login', '/Sign_up', '/Home', '/Blogs'];
+  const authRequired = !publicPages.includes(to.path);
+  const loggedIn = localStorage.getItem('user');
+  if (authRequired && !loggedIn) {
+    next('/login');
+  } else {
+    next();
+  }
+});
+
 export default router

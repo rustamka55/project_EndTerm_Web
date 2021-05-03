@@ -1,23 +1,21 @@
 <template>
-    <div class="grid">
+    <div class="grid" style="min-height: calc(100vh - 12vh);">
         <div class="grid-item">
             <img src="../assets/prof_photo.jpg" class="profile-photo">
         </div>
         <div class="grid-item">
-            <h2>{{user.name}}</h2>
-            <p>Birthday: {{user.birthday}}</p>
-            <p>Favourite genres: <span :key="genre" v-for="genre in user.genres">
-                <span  v-if="genre.id!=0">, </span>
-                {{genre.name}}</span></p>
-            <p>Gender: {{user.gender}}</p>
-            <p>Country: {{user.country}}</p>
+            <h2>{{currentUser.username}}</h2>
+            <p>Email: {{currentUser.email}}</p>
+            <p>ID: {{currentUser.id}}</p>
         </div>
+        <!--
         <div class="grid-item">
             <ToDo :todo_list = "todo_list"></ToDo>
         </div>
         <div class="grid-item">
             <ProfileBlogs :news = "news"></ProfileBlogs>
         </div>
+        -->
     </div>
 </template>
 
@@ -27,22 +25,30 @@ import ProfileBlogs from './ProfileBlogs'
 
 export default {
     name:'Profile',
+    computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    }
+  },
+  mounted() {
+    if (!this.currentUser) {
+      this.$router.push('/login');
+    }
+  },
     components:{
         ToDo,
         ProfileBlogs,
 
     },
     props:{
-        user: Object,
         todo_list:Array,
-        news: Array,
-
     }
 
 }
 </script>
 
 <style scoped>
+
 ul {
     margin: 0;
     padding: 0;

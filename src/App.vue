@@ -1,12 +1,13 @@
 <template>
 <Header></Header>
-<router-view :user = "user" :todo_list = "todo_list" :rankings = "rankings" :news = "news" :latest_releases = "latest_releases"></router-view>
+<router-view  :todo_list = "todo_list" :rankings = "rankings"  :latest_releases = "latest_releases"></router-view>
 <Footer></Footer>
 </template>
 
 <script>
 import Header from './components/Header'
 import Footer from './components/Footer'
+import axios from 'axios'
 
 export default {
   name: 'App',
@@ -17,144 +18,24 @@ export default {
   data(){
     return{
       rankings: [],
-      news: [],
       latest_releases:[],
       todo_list:[],
       user:{},
     } 
   },
   created(){
-    this.rankings = [
-      {
-        place: 1,
-        artists:[
-          {
-          name:'NCT U',
-          index:0,
-          }
-        ],
-        song_name:'90\'s Love', 
-      },
-      {
-        place: 2,
-        artists:[{
-          name: 'BTS',
-          index:0,
-          }],
-        song_name:'Dynamite', 
-      },
-      {
-        place: 3,
-        artists:[{
-          name: 'Kyoung Seo',
-          index: 0,
-        }],
-        song_name:'Shiny Star(2020)', 
-      },
-      {
-        place: 4,
-        artists:[{
-          name: 'BTS',
-          index: 0,
-          }],
-        song_name:'Life Goes On', 
-      },
-      {
-        place: 5,
-        artists:[{
-          name:'Rain',
-          index:0,
-          },
-          {name:'JYP',
-          index:1}],
-        song_name:'Switch to me', 
-      },
-    ]
-    this.news = [
-      {
-        id:3,
-        title:"(G)I-DLE released their new EP3",
-        author:"S.Somebody",
-        date:"12.01.2021",
-        message:`On Monday (01/11), the K-Pop 6-piece girl group dropped their fourth mini album I burn via CUBE Entertainment and Republic Records.\n I burn includes self-written and self-produced tracks by (G)I-dle with songwriting and arranegement
-                collaborations with Pop Time, BreadBeat, Seo Jae-woo, FCM Houdini, FCM 667, Lee Woo-min (a.k.a. collapsedone), and Ahn Ye-eun.\n Three concept versions of I burn, namely Winter, Flower, and Fire, are available and each come with
-                a sleeve, booklet, CD, lyric paper, mini poster, postcard, photo card, lucky card, and sticker.\n The 6-track offering features the lead single '화(火花)(HWAA)', which also received its own visual alongside the mini album's release.`
-      },
-      {
-        id:2,
-        title:"Dreamcathcer released their new EP2",
-        author:"S.Somebody",
-        date:"12.01.2021",
-        message:`On Monday (01/11), the K-Pop 6-piece girl group dropped their fourth mini album I burn via CUBE Entertainment and Republic Records.<br> I burn includes self-written and self-produced tracks by (G)I-dle with songwriting and arranegement
-                collaborations with Pop Time, BreadBeat, Seo Jae-woo, FCM Houdini, FCM 667, Lee Woo-min (a.k.a. collapsedone), and Ahn Ye-eun.<br> Three concept versions of I burn, namely Winter, Flower, and Fire, are available and each come with
-                a sleeve, booklet, CD, lyric paper, mini poster, postcard, photo card, lucky card, and sticker.<br> The 6-track offering features the lead single '화(火花)(HWAA)', which also received its own visual alongside the mini album's release.`
-      },
-      {
-        id:1,
-        title:"(G)I-DLE released their new EP1",
-        author:"S.Somebody",
-        date:"12.01.2021",
-         message:`On Monday (01/11), the K-Pop 6-piece girl group dropped their fourth mini album I burn via CUBE Entertainment and Republic Records.<br> I burn includes self-written and self-produced tracks by (G)I-dle with songwriting and arranegement
-                collaborations with Pop Time, BreadBeat, Seo Jae-woo, FCM Houdini, FCM 667, Lee Woo-min (a.k.a. collapsedone), and Ahn Ye-eun.<br> Three concept versions of I burn, namely Winter, Flower, and Fire, are available and each come with
-                a sleeve, booklet, CD, lyric paper, mini poster, postcard, photo card, lucky card, and sticker.<br> The 6-track offering features the lead single '화(火花)(HWAA)', which also received its own visual alongside the mini album's release.`
-      },
-      {
-        id:0,
-        title:"(G)I-DLE released their new EP0",
-        author:"S.Somebody",
-        date:"12.01.2021",
-         message:`On Monday (01/11), the K-Pop 6-piece girl group dropped their fourth mini album I burn via CUBE Entertainment and Republic Records.<br> I burn includes self-written and self-produced tracks by (G)I-dle with songwriting and arranegement
-                collaborations with Pop Time, BreadBeat, Seo Jae-woo, FCM Houdini, FCM 667, Lee Woo-min (a.k.a. collapsedone), and Ahn Ye-eun.<br> Three concept versions of I burn, namely Winter, Flower, and Fire, are available and each come with
-                a sleeve, booklet, CD, lyric paper, mini poster, postcard, photo card, lucky card, and sticker.<br> The 6-track offering features the lead single '화(火花)(HWAA)', which also received its own visual alongside the mini album's release.`
-      }
-    ]
-    this.latest_releases = [
-      {
-        id: 1,
-        artists:[
-          {
-          name:'NCT U',
-          index:0,
-          }
-        ],
-        song_name:'90\'s Love', 
-      },
-      {
-        id: 2,
-        artists:[{
-          name: 'BTS',
-          index:0,
-          }],
-        song_name:'Dynamite', 
-      },
-      {
-        id: 3,
-        artists:[{
-          name: 'Kyoung Seo',
-          index: 0,
-        }],
-        song_name:'Shiny Star(2020)', 
-      },
-      {
-        id: 4,
-        artists:[{
-          name: 'BTS',
-          index: 0,
-          }],
-        song_name:'Life Goes On', 
-      },
-      {
-        id: 5,
-        artists:[{
-          name:'Rain',
-          index:0,
-          },
-          {name:'JYP',
-          index:1}],
-        song_name:'Switch to me', 
-      },
-    ],
-    this.todo_list = [
+    axios.get('http://localhost/api/blog/readRankings.php').then((response) => {
+            this.rankings = response.data.records;
+        }, (error) => {
+            console.log(error);
+        });;
+    axios.get('http://localhost/api/blog/readLatestReleases.php').then((response) => {
+            this.latest_releases = response.data.records;
+        }, (error) => {
+            console.log(error);
+        });;
+    
+    /*this.todo_list = [
       {
         id:0,
         text:"Do final project",
@@ -175,27 +56,7 @@ export default {
         text:"Da",
         checked:false,
       },
-    ],
-    this.user = {
-        id:0,
-        name:"Ya Hleb",
-        birthday: "12.12.2012",
-        genres: [
-          {
-            name: "pop",
-            id:0,
-          },
-          {
-            name:"rock",
-            id:1,
-          },
-          {
-            name:"EDM",
-            id:2,
-          }],
-        gender: "Female",
-        country:"Hlebopekarnya",
-      }
+    ]*/
   }
 }
 </script>

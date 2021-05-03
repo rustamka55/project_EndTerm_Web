@@ -1,22 +1,60 @@
 <template>
 <div>
-  <form action="/action.php">
-        <label for="email">Email:</label><br>
-        <input type="text" id="email" name="email"><br>
+  <form @submit.prevent="handleLogin">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username" v-model="user.username"><br>
         <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password"><br>
+        <input type="password" id="password" name="password" v-model="user.password"><br>
         <div class="clearfix">
-            <button type="button" class="cancelbtn">Cancel</button>
             <button type="submit" class="signupbtn">Sign Up</button>
+        </div>
+        <div v-if="message">
+          <p>{{message}}</p>
         </div>
     </form>
 </div>
 </template>
 
 <script>
+import User from '../models/user'
+
 export default {
-    name:'Login'
-}
+  name:'Login',
+  data(){
+    return {
+      user: new User('', ''),
+      message: ''
+    };
+  },
+  computed: {
+    loggedIn() {
+      return this.$store.state.auth.status.loggedIn;
+    }
+  },
+  created() {
+    if (this.loggedIn) {
+      this.$router.push('/Profile');
+    }
+  },
+  methods: {
+    handleLogin() {
+      if (this.user.username && this.user.password) {
+        this.$store.dispatch('auth/login', this.user).then(
+          () => {
+            this.$router.push('/Profile');
+          },
+          error => {
+            this.message =
+              (error.response && error.response.data) ||
+              error.message ||
+              error.toString();
+          }
+        );
+      };
+    }
+  }
+};
+
 </script>
 
 <style scoped>

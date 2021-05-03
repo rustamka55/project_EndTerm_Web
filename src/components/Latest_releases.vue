@@ -4,13 +4,8 @@
         <ul>
             <li :key="release.id" v-for="release in latest_releases">
                 <dl>
-                    <dt>
-                        <span :key="artist.index" v-for="artist in release.artists">
-                            <span  v-if="artist.index!=0">, 
-                            </span>{{artist.name}} 
-                        </span>
-                    </dt>
-                    <dd>{{release.song_name}}</dd>
+                    <dt>{{release.artists}}</dt>
+                    <dd>{{release.songname}}</dd>
                 </dl>
             </li> 
         </ul>

@@ -1,33 +1,95 @@
 <template>
-
-  <form action="/action.php">
+  <Form @submit="handleRegister">
+        <label for="username">Username:</label><br>
+        <Field type="text" id="username" name="username" v-model="user.username" /><br>
+        <ErrorMessage name="username" /><br>
         <label for="email">Email:</label><br>
-        <input type="text" id="email" name="email"><br>
+        <Field type="text" id="email" name="email" v-model="user.email"/><br>
+        <ErrorMessage name="email" /><br>
         <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password"><br>
-        <label for="password">Confirm password:</label><br>
-        <input type="password" id="password" name="password"><br>
-        <label for="fname">First name:</label><br>
-        <input type="text" id="fname" name="fname"><br>
-        <label for="lname">Last name:</label><br>
-        <input type="text" id="lname" name="lname"><br>
-        <label for="birthday">Birthday:</label><br>
-        <input type="date" id="birthday" name="birthday"><br>
-        <label for="gender">Gender:</label><br>
-        <input type="text" id="gender" name="gender"><br>
-        <label for="country">Country:</label><br>
-        <input type="text" id="country" name="country"><br><br>
+        <Field type="password" id="password" name="password" v-model="user.password"/><br>
+        <ErrorMessage name="password" /><br>
         <div class="clearfix">
-            <button type="button" class="cancelbtn">Cancel</button>
             <button type="submit" class="signupbtn">Sign Up</button>
         </div>
+        <div v-if="message">
+          <p>{{message}}</p>
+        </div>
     </form>
-    
 </template>
 
 <script>
+import { Form, Field, ErrorMessage  } from 'vee-validate';
+import User from '../models/user';
+
 export default {
-    name:'Sign_up'
+  name:'Sign_up',
+  components: {
+    Form,
+    Field,
+    ErrorMessage ,
+
+  },
+  data() {
+    return {
+      user: new User('', '', ''),
+      message: ''
+    };
+  },
+  computed: {
+    loggedIn() {
+      return this.$store.state.auth.status.loggedIn;
+    }
+  },
+  mounted() {
+    if (this.loggedIn) {
+      this.$router.push('/Profile');
+    }
+  },
+  methods: {
+    handleRegister(form) {
+      this.message = '';
+      this.$store.dispatch('auth/register', this.user).then(
+        data => {
+          this.message = data.message;
+        },
+        error => {
+          this.message =
+            (error.response && error.response.data) ||
+            error.message ||
+            error.toString();
+          this.successful = false;
+        }
+      );
+    }
+  },
+  /*validateEmail(value) {
+    if (!value) {
+      return 'This field is required';
+    }
+    if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/i.test(value)) {
+      return 'This field must be a valid email';
+    }
+    return true;
+  },
+  validateUsername(value) {
+    if (!value) {
+      return 'This field is required';
+    }
+    if (!/^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/i.test(value)) {
+      return 'This field must be a valid username';
+    }
+    return true;
+  },
+  validatePassword(value) {
+    if (!value) {
+      return 'This field is required';
+    }
+    if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i.test(value)) {
+      return 'This field must be a valid password';
+    }
+    return true;
+  },*/
 }
 </script>
 
@@ -36,6 +98,10 @@ export default {
     margin-left: 4vw;
     margin-right: 4vw;
     padding-top:2vh;
+}
+form{
+    min-height: 88vh;
+
 }
 input[type=text], input[type=password],input[type=date] {
     width: 90%;
